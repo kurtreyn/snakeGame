@@ -11,10 +11,10 @@ using namespace std; // not really necessary
 
 bool gameOver;
 const int width = 20, height = 20;
-int x, y, FruitX, FruitY, score;
+int x, y, fruitX, fruitY, score;
 enum eDirection {STOP = 0, LEFT, RIGHT, UP, DOWN};
 eDirection dir;
-int TailX[100], TailY[100];
+int tailX[100], tailY[100];
 int nTail = 0;
 
 void Setup(){
@@ -23,12 +23,13 @@ void Setup(){
     noecho();
     cbreak();
     curs_set(0);
+
     gameOver = false;
     dir = STOP;
     x = width / 2;
     y = height / 2;
-    FruitX = (rand() % width)+1;
-    FruitY = (rand() % height)+1;
+    fruitX = (rand() % width)+1;
+    fruitY = (rand() % height)+1;
     score = 0;
 }
 
@@ -47,11 +48,11 @@ void Draw(){
                 mvprintw(i, j, "+");
             else if (i == y && j == x)
                 mvprintw(i, j, "O");
-            else if(i == FruitY && j == FruitX)
+            else if(i == fruitY && j == fruitX)
                 mvprintw(i, j, "Q");
             else{
               for(int k = 0; k < nTail; k++){
-                if (TailX[k] == j && TailY[k] == i){
+                if (tailX[k] == j && tailY[k] == i){
                   mvprintw(i, j, "o");
                 }
               }
@@ -68,7 +69,6 @@ void Draw(){
 void Input(){
 
   keypad(stdscr, true);
-
   halfdelay(1);
 
   int c = getch();
@@ -80,7 +80,6 @@ void Input(){
     case KEY_RIGHT:
       dir = RIGHT;
       break;
-
     case KEY_UP:
       dir = UP;
       break;
@@ -96,19 +95,19 @@ void Input(){
 
 void Logic(){
 
-  int prevX = TailX[0];
-  int prevY = TailY[0];
+  int prevX = tailX[0];
+  int prevY = tailY[0];
   int prev2X, prev2Y;
-  TailX[0] = x;
-  TailY[0] = y;
+  tailX[0] = x;
+  tailY[0] = y;
 
 
 
   for (int i = 1; i < nTail; i++){
-    prev2X = TailX[i];
-    prev2Y = TailY[i];
-    TailX[i] = prevX;
-    TailY[i] = prevY;
+    prev2X = tailX[i];
+    prev2Y = tailY[i];
+    tailX[i] = prevX;
+    tailY[i] = prevY;
     prevX = prev2X;
     prevY = prev2Y;
   }
@@ -133,15 +132,15 @@ void Logic(){
   if(x > width || x < 1 || y < 1 || y > height)
     gameOver = true;
 
-  if(x == FruitX && y == FruitY){
+  if(x == fruitX && y == fruitY){
     score++;
-    FruitX = (rand() % width)+1;
-    FruitY = (rand() % height)+1;
+    fruitX = (rand() % width)+1;
+    fruitY = (rand() % height)+1;
     nTail++;
   }
 
   for (int i = 0; i < nTail; i++)
-    if (TailX[i] == x && TailY[i] == y){
+    if (tailX[i] == x && tailY[i] == y){
       gameOver = true;
     }
 
@@ -150,7 +149,6 @@ void Logic(){
 int main(){
 
   Setup();
-
   Draw();
 
   while(!gameOver){
